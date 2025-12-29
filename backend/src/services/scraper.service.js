@@ -31,8 +31,14 @@ const scrapeArticlesFromPage = async (pageUrl) => {
 
     const articles = [];
     $('.blog-card, article, .post').each((i, elem) => {
-      const title = $(elem).find('h2, h3').first().text().trim();
-      const link = $(elem).find('a').first().attr('href');
+      const $elem = $(elem);
+      const title = $elem
+        .find('h2, h3, .title, .blog-title')
+        .first()
+        .text()
+        .trim();
+
+      const link = $elem.find('a').first().attr('href');
 
       if (title && link) {
         const fullUrl = link.startsWith('http')
@@ -57,39 +63,39 @@ const scrapeArticleContent = async (url) => {
 
     $('script, style, nav, header, footer, aside').remove();
 
-    const title = $('h1').first().text().trim();
-    let content = '';
+    const title =
+      $('h1').first().text().trim() ||
+      $('title').text().trim();
 
-    $('article, main').each((i, elem) => {
+    let content = '';
+    $('article, .content, .post-content, main').each((i, elem) => {
       content += $(elem).text().trim() + '\n';
     });
+
+    if (!content) {
+      content = $('body').text().trim();
+    }
 
     content = content.replace(/\s+/g, ' ').trim();
 
     return { title, content };
   } catch (error) {
-    console.error('Error scraping article:', error.message);
+    console.error('Error scraping article content:', error.message);
     return { title: '', content: '' };
   }
 };
 
 const scrapeOldestArticles = async () => {
-  const lastPage = await getLastPageNumber();
-  const pageUrl = `${BASE_URL}/page/${lastPage}`;
-  const articles = await scrapeArticlesFromPage(pageUrl);
+  try {
+    const lastPage = await getLastPageNumber();
+    const lastPageUrl = `${BASE_URL}/page/${lastPage}`;
+    const articlesData = await scrapeArticlesFromPage(lastPageUrl);
 
-  return articles.slice(0, 5).map(({ title, url }) => {
-    const slug = title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
-
-    return {
-      title,
-      slug,
-      sourceUrl: url,
-    };
-  });
+    return articlesData.slice(0, 5);
+  } catch (error) {
+    console.error('Error in scrapeOldestArticles:', error.message);
+    throw error;
+  }
 };
 
 module.exports = {
