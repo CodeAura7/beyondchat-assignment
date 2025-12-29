@@ -31,7 +31,9 @@ const searchGoogle = async (query) => {
         if (
           decodedUrl.startsWith('http') &&
           !decodedUrl.includes('google.com') &&
-          !decodedUrl.includes('youtube.com')
+          !decodedUrl.includes('youtube.com') &&
+          (decodedUrl.includes('blog') ||
+            decodedUrl.includes('article'))
         ) {
           links.push(decodedUrl);
         }
@@ -60,7 +62,12 @@ const fetchArticles = async () => {
 const regenerateArticles = async () => {
   console.log('Starting article regeneration process...');
   const articles = await fetchArticles();
-  console.log(`Found ${articles.length} articles`);
+
+  for (const article of articles) {
+    console.log(`Searching references for: ${article.title}`);
+    const references = await searchGoogle(article.title);
+    console.log(`Found ${references.length} references`);
+  }
 };
 
 regenerateArticles();
