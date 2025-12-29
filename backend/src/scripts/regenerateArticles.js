@@ -64,9 +64,26 @@ const regenerateArticles = async () => {
   const articles = await fetchArticles();
 
   for (const article of articles) {
-    console.log(`Searching references for: ${article.title}`);
-    const references = await searchGoogle(article.title);
-    console.log(`Found ${references.length} references`);
+    console.log(`\nProcessing: ${article.title}`);
+
+    const searchResults = await searchGoogle(article.title);
+    console.log(`Found ${searchResults.length} reference links`);
+
+    const referenceContents = [];
+
+    for (const url of searchResults) {
+      console.log(`Scraping reference: ${url}`);
+      const { content } =
+        await scraperService.scrapeArticleContent(url);
+
+      if (content) {
+        referenceContents.push(content.substring(0, 1500));
+      }
+    }
+
+    console.log(
+      `Collected ${referenceContents.length} reference contents`
+    );
   }
 };
 
