@@ -1,12 +1,24 @@
+import { useState } from 'react';
 import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import ArticleDetail from './pages/ArticleDetail';
 
 function App() {
+  const [selectedArticleId, setSelectedArticleId] =
+    useState(null);
+
   return (
     <>
       <Navbar />
       <main className="container">
-        <h1>BeyondChats</h1>
-        <p>Article platform frontend initialized.</p>
+        {selectedArticleId ? (
+          <ArticleDetail
+            articleId={selectedArticleId}
+            onBack={() => setSelectedArticleId(null)}
+          />
+        ) : (
+          <Home onSelect={setSelectedArticleId} />
+        )}
       </main>
     </>
   );
