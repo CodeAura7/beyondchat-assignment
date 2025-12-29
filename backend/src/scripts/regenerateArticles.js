@@ -49,10 +49,16 @@ const fetchArticles = async () => {
   return res.data;
 };
 
+const updateArticle = async (id, data) => {
+  await axios.put(`${BACKEND_API_URL}/api/articles/${id}`, data);
+};
+
 const regenerateArticles = async () => {
   const articles = await fetchArticles();
 
   for (const article of articles) {
+    console.log(`\nProcessing: ${article.title}`);
+
     const refs = await searchGoogle(article.title);
     const referenceContents = [];
 
@@ -66,7 +72,6 @@ const regenerateArticles = async () => {
 
     if (referenceContents.length === 0) continue;
 
-    console.log(`Rewriting: ${article.title}`);
     const rewritten =
       await llmService.rewriteArticle(
         article.title,
@@ -74,8 +79,20 @@ const regenerateArticles = async () => {
         referenceContents
       );
 
-    console.log('Rewrite completed (not saved yet)');
+    const referencesSection =
+      '\n\n---\n\nReferences:\n' +
+      refs.map((u, i) => `${i + 1}. ${u}`).join('\n');
+
+    await updateArticle(article._id, {
+      content: rewritten + referencesSection,
+      isUpdated: true,
+      references: refs,
+    });
+
+    console.log(`✓ Updated: ${article.title}`);
   }
+
+  process.exit(0);
 };
 
 regenerateArticles();
