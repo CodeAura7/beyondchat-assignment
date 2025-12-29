@@ -57,10 +57,23 @@ const deleteArticle = async (req, res) => {
   }
 };
 
+const scraperService = require('../services/scraper.service');
+
+const scrapeArticles = async (req, res) => {
+  try {
+    const articles = await scraperService.scrapeOldestArticles();
+    res.status(200).json(articles);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 module.exports = {
   createArticle,
   getAllArticles,
   getArticleById,
   updateArticle,
   deleteArticle,
+  scrapeArticles,
 };
