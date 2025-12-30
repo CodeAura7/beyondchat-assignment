@@ -116,19 +116,21 @@ The first request after inactivity may take up to ~50 seconds due to cold start.
 
     - Used for persisting scraped and regenerated articles
 
-**Environment Configuration**
-**Frontend Environment Variables**
+## Environment Configuration
 
-The frontend determines the backend API URL via an environment variable.
-    VITE_API_BASE_URL=<BACKEND_DEPLOYMENT_URL>
+### Frontend Environment Variables
 
-For local development:
-    VITE_API_BASE_URL=http://localhost:5000/api
+```env
+# Generic
+VITE_API_BASE_URL=<BACKEND_DEPLOYMENT_URL>
 
-For production:
-    VITE_API_BASE_URL=<Render backend URL>
+# Local development
+VITE_API_BASE_URL=http://localhost:5000/api
 
-**Local Setup**
+# Production
+VITE_API_BASE_URL=<Render backend URL>
+
+## Local Setup
 **Backend**
     cd backend
     npm install
