@@ -1,79 +1,33 @@
-const articleService = require('../services/article.service');
-
-const createArticle = async (req, res) => {
-  try {
-    const article = await articleService.createArticle(req.body);
-    res.status(201).json(article);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-const getAllArticles = async (req, res) => {
-  try {
-    const articles = await articleService.getAllArticles();
-    res.status(200).json(articles);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-const getArticleById = async (req, res) => {
-  try {
-    const article = await articleService.getArticleById(req.params.id);
-    if (!article) {
-      return res.status(404).json({ error: 'Article not found' });
-    }
-    res.status(200).json(article);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-const updateArticle = async (req, res) => {
-  try {
-    const article = await articleService.updateArticle(
-      req.params.id,
-      req.body
-    );
-    if (!article) {
-      return res.status(404).json({ error: 'Article not found' });
-    }
-    res.status(200).json(article);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-const deleteArticle = async (req, res) => {
-  try {
-    const article = await articleService.deleteArticle(req.params.id);
-    if (!article) {
-      return res.status(404).json({ error: 'Article not found' });
-    }
-    res.status(200).json({ message: 'Article deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
+const Article = require('../models/article.model');
 const scraperService = require('../services/scraper.service');
 
 const scrapeArticles = async (req, res) => {
   try {
-    const articles = await scraperService.scrapeOldestArticles();
-    res.status(200).json(articles);
+    const scraped = await scraperService.scrapeOldestArticles();
+
+    const savedArticles = [];
+
+    for (const item of scraped) {
+      const exists = await Article.findOne({
+        sourceUrl: item.url,
+      });
+
+      if (exists) continue;
+
+      const article = await Article.create({
+        title: item.title,
+        content: 'Original article content (pending rewrite)',
+        slug: item.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-'),
+        sourceUrl: item.url,
+      });
+
+      savedArticles.push(article);
+    }
+
+    res.status(201).json(savedArticles);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-};
-
-
-module.exports = {
-  createArticle,
-  getAllArticles,
-  getArticleById,
-  updateArticle,
-  deleteArticle,
-  scrapeArticles,
 };
