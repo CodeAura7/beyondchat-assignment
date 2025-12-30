@@ -66,3 +66,33 @@ button:hover {
     padding: 0.75rem;
   }
 }
+
+/* Article state styling */
+
+.article-card.original {
+  background-color: #ffffff;
+}
+
+.article-card.updated {
+  background-color: #ecfdf5;
+  border: 1px solid #10b981;
+}
+
+.status-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.status-badge.original {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.status-badge.updated {
+  background-color: #10b981;
+  color: #ffffff;
+}
