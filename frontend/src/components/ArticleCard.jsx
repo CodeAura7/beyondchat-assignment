@@ -1,4 +1,4 @@
-export default function ArticleCard({ article }) {
+export default function ArticleCard({ article, onRegenerate }) {
   const isUpdated = article.isUpdated === true;
 
   return (
@@ -9,6 +9,12 @@ export default function ArticleCard({ article }) {
 
       <h3>{article.title}</h3>
       <p>{article.content}</p>
+
+      {!isUpdated && (
+        <button onClick={() => onRegenerate(article._id)}>
+          Regenerate
+        </button>
+      )}
 
       {isUpdated && article.references && article.references.length > 0 && (
         <div className="references">

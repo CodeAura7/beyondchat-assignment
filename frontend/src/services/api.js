@@ -23,3 +23,18 @@ export const fetchArticleById = async (id) => {
 
   return res.json();
 };
+
+export const regenerateArticle = async (id) => {
+  const res = await fetch(
+    `${API_BASE_URL}/articles/${id}/regenerate`,
+    {
+      method: 'POST',
+    }
+  );
+
+  if (!res.ok) {
+    throw new Error(`Failed to regenerate article: ${res.status}`);
+  }
+
+  return res.json();
+};

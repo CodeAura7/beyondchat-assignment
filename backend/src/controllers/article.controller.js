@@ -1,5 +1,8 @@
 const Article = require('../models/article.model');
 const scraperService = require('../services/scraper.service');
+const {
+  regenerateArticleById,
+} = require('../services/articleRegeneration.service');
 
 /* ---------- CRUD CONTROLLERS ---------- */
 
@@ -87,8 +90,6 @@ const scrapeArticles = async (req, res) => {
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/(^-|-$)+/g, ''),
         sourceUrl: item.url,
-
-        // STEP 3: explicit state
         isUpdated: false,
         references: [],
       });
@@ -102,6 +103,17 @@ const scrapeArticles = async (req, res) => {
   }
 };
 
+/* ---------- REGENERATE CONTROLLER ---------- */
+
+const regenerateArticle = async (req, res) => {
+  try {
+    const article = await regenerateArticleById(req.params.id);
+    res.status(200).json(article);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
 /* ---------- EXPORTS ---------- */
 
 module.exports = {
@@ -111,4 +123,5 @@ module.exports = {
   updateArticle,
   deleteArticle,
   scrapeArticles,
+  regenerateArticle, 
 };

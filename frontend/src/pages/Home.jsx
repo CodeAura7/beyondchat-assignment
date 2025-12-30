@@ -1,14 +1,30 @@
 import { useEffect, useState } from 'react';
-import { fetchArticles } from '../services/api';
+import {
+  fetchArticles,
+  regenerateArticle,
+} from '../services/api';
 import ArticleCard from '../components/ArticleCard';
 
 function Home({ onSelect }) {
   const [articles, setArticles] = useState([]);
   const [filter, setFilter] = useState('all');
 
-  useEffect(() => {
+  const loadArticles = () => {
     fetchArticles().then(setArticles);
+  };
+
+  useEffect(() => {
+    loadArticles();
   }, []);
+
+  const handleRegenerate = async (id) => {
+    try {
+      await regenerateArticle(id);
+      loadArticles(); // refresh after regeneration
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
   const filteredArticles = articles.filter(article => {
     if (filter === 'updated') return article.isUpdated === true;
@@ -43,11 +59,12 @@ function Home({ onSelect }) {
         </button>
       </div>
 
-      {filteredArticles.map((article) => (
+      {filteredArticles.map(article => (
         <ArticleCard
           key={article._id}
           article={article}
           onSelect={onSelect}
+          onRegenerate={handleRegenerate}
         />
       ))}
     </div>

@@ -14,4 +14,7 @@ router.get('/:id', articleController.getArticleById);
 router.put('/:id', articleController.updateArticle);
 router.delete('/:id', articleController.deleteArticle);
 
+// regenerate article
+router.post('/:id/regenerate', articleController.regenerateArticle);
+
 module.exports = router;
