@@ -76,44 +76,45 @@ graph TD
     C -->|JSON Response| B
     B -->|Render Articles| A
 
-**Framework Clarification**
+```
+## Framework Clarification
 
 Although the assignment mentioned Laravel, this project is intentionally implemented using Node.js with Express.
 
 The choice was made to:
-    -Maintain consistency across frontend and backend using JavaScript
-    -Simplify API development and async workflows
-    -Focus on system design, data flow, and feature completeness rather than framework-specific boilerplate
+- Maintain consistency across frontend and backend using JavaScript
+- Simplify API development and async workflows
+- Focus on system design, data flow, and feature completeness rather than framework-specific boilerplate
 
 All required backend functionality is fully implemented and documented.
 
-**Live Deployment & API Configuration**
+## Live Deployment & API Configuration
 **Frontend**
 
-    -Deployed on Vercel
+    - Deployed on Vercel
 
-    -Production URL : https://beyondchat-assignment-frontend.vercel.app
+    - Production URL : https://beyondchat-assignment-frontend.vercel.app
 
 The frontend communicates with the backend using a configurable API base URL.
 
 **Backend**
 
-    -Deployed on Render
+    - Deployed on Render
 
-    -Runs a Node.js (Express) server on port 5000
+    - Runs a Node.js (Express) server on port 5000
 
-    -Exposes REST APIs under /api/*
+    - Exposes REST APIs under /api/*
 
 Note: The backend is hosted on Render’s free tier.
 The first request after inactivity may take up to ~50 seconds due to cold start.
 
 **Database**
 
-    -MongoDB Atlas (cloud-hosted)
+    - MongoDB Atlas (cloud-hosted)
 
-    -Connected via Mongoose
+    - Connected via Mongoose
 
-    -Used for persisting scraped and regenerated articles
+    - Used for persisting scraped and regenerated articles
 
 **Environment Configuration**
 **Frontend Environment Variables**
@@ -122,7 +123,7 @@ The frontend determines the backend API URL via an environment variable.
     VITE_API_BASE_URL=<BACKEND_DEPLOYMENT_URL>
 
 For local development:
-    VITE_API_BASE_URL=http://localhost:5000
+    VITE_API_BASE_URL=http://localhost:5000/api
 
 For production:
     VITE_API_BASE_URL=<Render backend URL>
@@ -144,3 +145,8 @@ Backend runs on:
 
 Frontend runs on:
     http://localhost:5173
+
+## Limitations
+- Google scraping may be rate-limited or blocked.
+- Render free-tier cold starts can delay first response.
+- LLM output quality depends on external reference availability.
